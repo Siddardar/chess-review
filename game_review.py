@@ -1,4 +1,4 @@
-from details import USERNAME
+from details import USERNAME, dark_squares, light_squares
 import time
 import requests
 import chess
@@ -153,8 +153,8 @@ class ChessAnalysis:
                 fen=fen_no,
                 squarelength=100,
                 pieceSet=loadPiecesFolder("./pieces"),
-                darkColor="#D18B47",
-                lightColor="#FFCE9E"
+                darkColor=dark_squares,
+                lightColor=light_squares
             )
 
             img = boardImage.save("board.png", 'PNG')
