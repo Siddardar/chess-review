@@ -24,15 +24,27 @@ This script allows one to analyze their most recent `chess.com` game in the styl
 
 ### Things to improve
 
+- **Implement a Web App**  
+ Bring this application to the web so that users can use it without needing to download python or the required dependencies. The easiest way to do this would be to probably use Flask but I am still looking into all the possible implementation options.
+<p>&nbsp;</p>
+
 - **~~Implement a GUI system~~**  
  I thought that I had to build a whole chess game where I could make the pieces move and then I realized I could simply take the [FEN](https://en.wikipedia.org/wiki/Fen) of each position (_FEN is an algebraic description of a chess position_) after a player moves turn that to an image, thanks to the help of a python module `fentoboardimage`, and simply display those images in sequence
 <p>&nbsp;</p>
 
-- **Implement a frame around the board**  
+- **~~Implement a frame around the board~~**  
    This is to help people, who perhaps are just starting out at chess, to recongnize the location of the squares as the move suggestions are given in algebraic notation (_c5 for example_)
 
-  I already made a frame overlay, you can preview it by running `test.py`, but I am having trouble implementing it into the main code.
+  I figured out that I could overlay the board on the frame after the board image was generated using PIL instead of trying to do it on the GUI.
+  <p>&nbsp;</p>
+
+- **Draw arrows on move suggestions**  
+  Possible aesthetic improvement
   <p>&nbsp;</p>
 
 - **Find 'great' and 'brilliant' moves**  
   These moves are phenominal moves that can be found by an engine but can be difficult to find by human players, even grandmasters.
+
+- **Find book moves**  
+These moves are moves that are commonly played in a given opening.
+<p>&nbsp;</p>

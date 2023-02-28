@@ -1,15 +1,12 @@
 from details import USERNAME, dark_squares, light_squares
-import time
 import requests
-import chess
 import chess.pgn
 from stockfish import Stockfish
-import pgn
 import datetime
 import json
-from colorama import Fore, Back, Style
 import PySimpleGUI as sg
 from fentoboardimage import fenToImage, loadPiecesFolder
+from PIL import Image
 
 
 class ChessAnalysis:
@@ -38,10 +35,7 @@ class ChessAnalysis:
         self.engine = Stockfish(
             path="stockfish_15.1_win_x64_avx2\stockfish-windows-2022-x86-64-avx2.exe", depth=18, parameters=settings)
 
-        self.board = chess.Board()
-
-    def info(self):
-
+    def fetch(self):
         print(f"Getting last game played by {USERNAME}")
         username = USERNAME
         YYYY = str(self.time.year)
@@ -54,10 +48,19 @@ class ChessAnalysis:
         with open("chess_games.pgn", "w") as f:
             f.write(last_game['pgn'])
 
+    def info(self):
+
         pgn = open("chess_games.pgn")
         game = chess.pgn.read_game(pgn)
 
         players = f"{game.headers['White']} vs {game.headers['Black']}"
+
+        print(f"\n{players}")
+        proceed = input("\nContinue with analysis? (y/n): ")
+        if proceed != 'y':
+            print('\nPlease wait for chess.com servers to upload your game')
+            print('Try again later')
+            return
 
         reviews = ["Starting position"]
         evals = ["0.00"]
@@ -85,7 +88,7 @@ class ChessAnalysis:
 
                     after_eval = self.engine.get_evaluation()['value']
                     best_eval = int(best_move["Centipawn"])
-                    diff = best_eval - after_eval
+                    diff = abs(best_eval - after_eval)
 
                     if best_eval * after_eval > 0:
                         if diff < 50:
@@ -129,11 +132,21 @@ class ChessAnalysis:
                         else:
                             review = "Blunder ❎"
 
-            evaluation = self.engine.get_evaluation()["value"]
-            evals.append(str(int(evaluation)/100))
+            evaluation = self.engine.get_evaluation()
+            if evaluation['type'] == 'cp':
+                evals.append(str(int(evaluation["value"])/100))
+            else:
+                if evaluation['value'] > 0:
+                    evals.append(
+                        f"White has mate in {abs(evaluation['value'])}")
+                elif evaluation['value'] < 0:
+                    evals.append(
+                        f"Black has mate in {abs(evaluation['value'])}")
+                else:
+                    evals.append("Checkmate")
+
             fen = self.engine.get_fen_position()
             fens.append(fen)
-
             reviews.append(review)
 
             if best == False:
@@ -157,7 +170,10 @@ class ChessAnalysis:
                 lightColor=light_squares
             )
 
-            img = boardImage.save("board.png", 'PNG')
+            frame = Image.open("./frame.png")
+            frame.paste(boardImage, (35, 35))
+
+            img = frame.save("board.png", 'PNG')
 
         board(fens[m])
         sg.theme('DarkAmber')
@@ -165,7 +181,11 @@ class ChessAnalysis:
                   [sg.Text(f"{evals[m]}", key="-EVAL-", font=("", 12)),
                    sg.Push(),
                    sg.Button('End Analysis', font=("Calibre", 14)),],
+                  [sg.Push(), sg.Text(game.headers['Black'],
+                                      font=("Calibre", 12)), sg.Push()],
                   [sg.Image('./board.png', key="-BOARD-")],
+                  [sg.Push(), sg.Text(game.headers['White'],
+                                      font=("Calibre", 12)), sg.Push()],
                   [sg.Text("")],
                   [sg.Text(f"{reviews[m]}", key="-REVIEW-",
                            font=("Calibre", 14))],
@@ -199,4 +219,5 @@ class ChessAnalysis:
 
 if __name__ == "__main__":
     analysis = ChessAnalysis()
+    analysis.fetch()
     analysis.info()
