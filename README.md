@@ -2,6 +2,10 @@
   ♘ Chess Analysis
 </h1>
 
+Click [here](https://youtu.be/YINtkVVE4ZI) to watch a short demo of the program in action!
+
+<p>&nbsp;</p>
+
 ## Overview
 
 This script allows one to analyze their most recent `chess.com` game in the style of chess.com's own _Game Review_. Free users get one _Game Review_ per day and that is kinds annoying especially if you play multiple games per day. So, I thought I could create my own since the chess engine chess.com uses, `Stockfish`, is open source and has a decent python library.
@@ -44,6 +48,7 @@ This script allows one to analyze their most recent `chess.com` game in the styl
 
 - **Find 'great' and 'brilliant' moves**  
   These moves are phenominal moves that can be found by an engine but can be difficult to find by human players, even grandmasters.
+  <p>&nbsp;</p>
 
 - **Find book moves**  
 These moves are moves that are commonly played in a given opening.

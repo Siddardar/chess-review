@@ -3,6 +3,7 @@ import requests
 import chess.pgn
 from stockfish import Stockfish
 import datetime
+import dateutil.relativedelta
 import json
 import PySimpleGUI as sg
 from fentoboardimage import fenToImage, loadPiecesFolder
@@ -43,7 +44,12 @@ class ChessAnalysis:
 
         api = f"https://api.chess.com/pub/player/{username}/games/{YYYY}/{MM}"
 
-        last_game = requests.get(api).json()['games'][-1]
+        try:
+            last_game = requests.get(api).json()['games'][-1]
+        except:
+            MM = f"{(int(MM)-1):02d}"
+            api = f"https://api.chess.com/pub/player/{username}/games/{YYYY}/{MM}"
+            last_game = requests.get(api).json()['games'][-1]
 
         with open("chess_games.pgn", "w") as f:
             f.write(last_game['pgn'])
